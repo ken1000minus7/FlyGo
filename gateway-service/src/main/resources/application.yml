@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    consul:
+      host: localhost
+      discovery:
+        hostname: localhost
+    discovery:
+      enabled: true
+    gateway:
+      mvc:
+        routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+          - Path=/urs/user/**
+        - id: flights-service
+          uri: lb://flights-service
+          predicates:
+          - Path=/urs/flights/**
+        - id: passenger-service
+          uri: lb://passenger-service
+          predicates:
+            - Path=/urs/passenger/**
+        - id: booking-service
+          uri: lb://booking-service
+          predicates:
+            - Path=/urs/booking/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/urs/payment/**
+server:
+  port: 2000

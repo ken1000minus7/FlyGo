@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/unitedgo_user
+    username: root
+    password: ken
+  jpa:
+    hibernate:
+      ddl-auto: update
+  cloud:
+    discovery:
+      enabled: true
+    consul:
+      host: localhost
+      discovery:
+        hostname: localhost
+server:
+  port: 8001
+jwt:
+  secret: life
+resilience4j:
+  circuitbreaker:
+    instances:
+      userService:
+        failure-rate-threshold: 80
+        sliding-window-size: 5
+        minimum-number-of-calls: 10
+        sliding-window-type: COUNT_BASED
+        permitted-number-of-calls-in-half-open-state: 3
+        wait-duration-in-open-state: 30s
+        automatic-transition-from-open-to-half-open-enabled: true

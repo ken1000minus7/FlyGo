@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: payment-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/unitedgo_user
+    username: root
+    password: ken
+  jpa:
+    hibernate:
+      ddl-auto: update
+  cloud:
+    discovery:
+      enabled: true
+    consul:
+      host: localhost
+      discovery:
+        hostname: localhost
+server:
+  port: 8006

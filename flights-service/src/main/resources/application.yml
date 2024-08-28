@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: flights-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/unitedgo_user
+    username: root
+    password: ken
+  jpa:
+    hibernate:
+      ddl-auto: update
+  cloud:
+    discovery:
+      enabled: true
+    consul:
+      host: localhost
+      discovery:
+        hostname: localhost
+server:
+  port: 8002
+flight:
+  apiKey: 8094b162009603a38298fe0794d725e1dec9ae000cb7ad763722e6de3224f89a
+  baseUrl: https://serpapi.com/search
+resilience4j:
+  circuitbreaker:
+    instances:
+      flightsService:
+        automatic-transition-from-open-to-half-open-enabled: true
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60s
