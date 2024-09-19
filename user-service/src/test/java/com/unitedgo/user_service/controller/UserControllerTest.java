@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,7 +25,7 @@ import com.unitedgo.user_service.service.UserService;
 import com.unitedgo.user_service.util.URSException;
 
 @SpringBootTest
-public class UserControllerTest {
+class UserControllerTest {
 
 	@Mock
 	private UserService userService;
@@ -42,7 +40,7 @@ public class UserControllerTest {
 	private UserController userController;
 	
 	@Test
-	public void testRegisterUser() throws URSException {
+	void testRegisterUser() throws URSException {
 		UserDTO userDTO = getUserDTO();
 		when(userService.registerUser(userDTO)).thenReturn(userDTO);
 		when(jwtService.generateToken(userDTO.getUsername())).thenReturn("token");
@@ -55,7 +53,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void testLoginUser() throws URSException {
+	void testLoginUser() throws URSException {
 		UserDTO userDTO = getUserDTO();
 		Credentials credentials = new Credentials(userDTO.getUsername(), userDTO.getPassword());
 		when(userService.getUser(userDTO.getUsername())).thenReturn(userDTO);
@@ -70,7 +68,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void testLoginUserBadCredentials() throws URSException {
+	void testLoginUserBadCredentials() throws URSException {
 		UserDTO userDTO = getUserDTO();
 		Credentials credentials = new Credentials(userDTO.getUsername(), userDTO.getPassword());
 		when(authenticationManager.authenticate(Mockito.any())).thenThrow(new BadCredentialsException(""));
@@ -80,7 +78,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void validateToken() {
+	void validateToken() {
 		Authentication authentication = Mockito.mock(Authentication.class);
 		when(authentication.getPrincipal()).thenReturn("user");
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -93,8 +91,8 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void testLoginUserFallback() {
-		URSException exception = assertThrows(URSException.class, () -> userController.loginUserFallback(null));
+	void testLoginUserFallback() {
+		URSException exception = assertThrows(URSException.class, () -> userController.loginUserFallback(null, new Exception()));
 		assertEquals(HttpStatus.SERVICE_UNAVAILABLE, exception.getCode());
 		assertEquals("Login unavailable", exception.getMessage());
 	}

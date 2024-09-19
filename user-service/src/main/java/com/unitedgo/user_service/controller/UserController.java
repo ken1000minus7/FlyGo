@@ -22,23 +22,31 @@ import com.unitedgo.user_service.service.JwtService;
 import com.unitedgo.user_service.service.UserService;
 import com.unitedgo.user_service.util.URSException;
 
+import ch.qos.logback.core.joran.conditional.IfAction;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 
 @RestController
 @RequestMapping("/urs/user")
 @Validated
+@Log4j2
 public class UserController {
 	
-	@Autowired
+	
 	private UserService userService;
-	
-	@Autowired
 	private JwtService jwtService;
-	
-	@Autowired
 	private AuthenticationManager authenticationManager;
 	
+	
+	@Autowired
+	public UserController(UserService userService, JwtService jwtService, AuthenticationManager authenticationManager) {
+		super();
+		this.userService = userService;
+		this.jwtService = jwtService;
+		this.authenticationManager = authenticationManager;
+	}
+
 	@PostMapping("/register")
 	public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody @Valid UserDTO userDTO) throws URSException {
 		UserDTO savedUser = userService.registerUser(userDTO);
@@ -69,7 +77,11 @@ public class UserController {
 		return ResponseEntity.ok(credentials);
 	}
 	
-	public void loginUserFallback(Credentials credentials) throws URSException {
+	public ResponseEntity<?> loginUserFallback(Credentials credentials, Exception exception) throws Exception {
+		if(exception instanceof URSException && ((URSException) exception).getCode().is4xxClientError()) {
+			throw exception;
+		}
+		log.info("Circuit broken, entering fallback");
 		throw new URSException("Login unavailable", HttpStatus.SERVICE_UNAVAILABLE);
 	}
 }

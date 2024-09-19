@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.Builder;
 
 import com.unitedgo.payment_service.dto.PaymentDTO;
 import com.unitedgo.payment_service.entity.Card;
@@ -22,17 +23,20 @@ import reactor.core.publisher.Mono;
 @Service
 public class PaymentService {
 	
-	@Autowired
 	private PaymentRepository paymentRepository;
-	
-	@Autowired
 	private CardRepository cardRepository;
-	
-	@Autowired
 	private WebClient.Builder webClient;
 	
-	private static final Double CREDIT_CARD_DISCOUNT = 0.9;
-	private static final Double DEBIT_CARD_DISCOUNT = 0.95;
+	@Autowired
+	public PaymentService(PaymentRepository paymentRepository, CardRepository cardRepository, Builder webClient) {
+		super();
+		this.paymentRepository = paymentRepository;
+		this.cardRepository = cardRepository;
+		this.webClient = webClient;
+	}
+
+	public static final Double CREDIT_CARD_DISCOUNT = 0.9;
+	public static final Double DEBIT_CARD_DISCOUNT = 0.95;
 	
 	@Transactional
 	public PaymentDTO makePayment(String bookingId, Integer cardId, String authHeader) throws URSException {

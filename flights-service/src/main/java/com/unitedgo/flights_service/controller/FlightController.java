@@ -24,10 +24,12 @@ import com.unitedgo.flights_service.validator.ValidDateConstraint;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.constraints.Size;
+import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Mono;
 
 @RestController
 @Validated
+@Log4j2
 @RequestMapping("/urs/flights")
 public class FlightController {
 	
@@ -37,19 +39,24 @@ public class FlightController {
 	@Value("${flight.apiKey}")
 	private String flightApiKey;
 	
-	@Autowired
 	private FlightService flightService;
+	private WebClient.Builder webClient;
 	
+	@Autowired
+	public FlightController(FlightService flightService) {
+		super();
+		this.flightService = flightService;
+		this.webClient = WebClient.builder();
+	}
+
 	@GetMapping("/search")
 	@CircuitBreaker(name = "flightsService", fallbackMethod = "searchFlightsFallback")
-	public ResponseEntity<?> searchFlights(
+	public ResponseEntity<FlightsResponse> searchFlights(
 		@RequestParam @Size(max = 3, min = 3) String origin,
 		@RequestParam @Size(max = 3, min = 3) String destination,
 		@RequestParam @ValidDateConstraint String date
 	) {
-		SearchResponse response = WebClient.builder()
-					.baseUrl(flightApiUrl)
-					.build()
+		SearchResponse response = webClient.baseUrl(flightApiUrl).build()
 					.get()
 					.uri(uriBuilder -> 
 						uriBuilder.queryParam("engine", "google_flights")
@@ -82,7 +89,11 @@ public class FlightController {
 		return ResponseEntity.ok(flight);
 	}
 	
-	public void searchFlightsFallback() throws URSException {
-		throw new URSException("Cannot search flights right now", HttpStatus.SERVICE_UNAVAILABLE);
-	}
+//	public ResponseEntity<?> searchFlightsFallback(String origin, String destination, String date, Exception exception) throws Exception {
+//		if(exception instanceof URSException && ((URSException) exception).getCode().is4xxClientError()) {
+//			throw exception;
+//		}
+//		log.info("Circuit broken, entering fallback");
+//		throw new URSException("Cannot search flights right now", HttpStatus.SERVICE_UNAVAILABLE);
+//	}
 }

@@ -22,15 +22,22 @@ import com.unitedgo.passenger_service.util.URSException;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 
 @RestController
 @Validated
+@Log4j2
 @RequestMapping("/urs/passenger")
 public class PassengerController {
 	
-	@Autowired
 	private PassengerService passengerService;
 	
+	@Autowired
+	public PassengerController(PassengerService passengerService) {
+		super();
+		this.passengerService = passengerService;
+	}
+
 	@PostMapping
 	@CircuitBreaker(name = "passengerService", fallbackMethod = "addPassengerFallback")
 	public ResponseEntity<Passenger> addPassenger(@RequestBody @Valid PassengerDTO passengerDTO) throws URSException {
@@ -56,7 +63,11 @@ public class PassengerController {
 		return ResponseEntity.ok(new PassengersResponse(passengers));
 	}
 	
-	public void addPassengerFallback() throws URSException {
+	public ResponseEntity<?> addPassengerFallback(PassengerDTO passengerDTO, Exception exception) throws URSException, Exception {
+		if(exception instanceof URSException && ((URSException) exception).getCode().is4xxClientError()) {
+			throw exception;
+		}
+		log.info("Circuit broken, entering fallback");
 		throw new URSException("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
 	}
 }

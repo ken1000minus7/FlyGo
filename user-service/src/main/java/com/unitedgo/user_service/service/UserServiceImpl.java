@@ -16,19 +16,25 @@ import com.unitedgo.user_service.util.URSException;
 @Service
 public class UserServiceImpl implements UserService {
 	
-	@Autowired
+	
 	private UserRepository userRepository;
-	
-	@Autowired
 	private ModelMapper modelMapper;
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+		super();
+		this.userRepository = userRepository;
+		this.modelMapper = modelMapper;
+		this.passwordEncoder = passwordEncoder;
+	}
+
+
 
 	@Override
 	public UserDTO registerUser(UserDTO userDTO) throws URSException {
-		if(userRepository.existsById(userDTO.getUsername())) {
-			throw new URSException("Username already exists", HttpStatus.CONFLICT);
+		if(userRepository.existsByUsernameOrPhoneNumber(userDTO.getUsername(), userDTO.getPhoneNumber())) {
+			throw new URSException("Username or phone number already exists", HttpStatus.CONFLICT);
 		}
 		userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 		User user = modelMapper.map(userDTO, User.class);
@@ -44,8 +50,6 @@ public class UserServiceImpl implements UserService {
 			return new UsernameNotFoundException("User not found");
 		});
 	}
-
-
 
 	@Override
 	public UserDTO getUser(String username) throws URSException {

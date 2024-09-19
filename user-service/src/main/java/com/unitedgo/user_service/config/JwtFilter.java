@@ -26,13 +26,19 @@ public class JwtFilter extends OncePerRequestFilter {
 	private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
     
-    @Autowired
     private UserService userService;
+    private JwtService jwtService;
     
     @Autowired
-    private JwtService jwtService;
+    public JwtFilter(UserService userService, JwtService jwtService) {
+		super();
+		this.userService = userService;
+		this.jwtService = jwtService;
+	}
 
-    @Override
+
+
+	@Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
@@ -59,7 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) { /* Ignoring exception */ }
         finally {
             filterChain.doFilter(request,response);
         }

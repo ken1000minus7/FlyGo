@@ -17,3 +17,12 @@ spring:
         hostname: localhost
 server:
   port: 8003
+resilience4j:
+  circuitbreaker:
+    instances:
+      bookingService:
+        sliding-window-size: 10
+        automatic-transition-from-open-to-half-open-enabled: true
+        sliding-window-type: COUNT_BASED
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60s

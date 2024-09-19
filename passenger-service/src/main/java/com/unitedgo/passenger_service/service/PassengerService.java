@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.Builder;
 
 import com.unitedgo.passenger_service.dto.PassengerDTO;
 import com.unitedgo.passenger_service.entity.Passenger;
@@ -20,12 +21,16 @@ import reactor.core.publisher.Mono;
 @Service
 public class PassengerService {
 
-	@Autowired
 	private PassengerRepository passengerRepository;
-	
-	@Autowired
 	private WebClient.Builder webClient;
 	
+	@Autowired
+	public PassengerService(PassengerRepository passengerRepository, Builder webClient) {
+		super();
+		this.passengerRepository = passengerRepository;
+		this.webClient = webClient;
+	}
+
 	@Transactional
 	public Passenger addPassenger(PassengerDTO passengerDTO) throws URSException {
 		String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -1,6 +1,5 @@
 package com.unitedgo.booking_service.service;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -12,6 +11,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.Builder;
 
 import com.unitedgo.booking_service.dto.BookingDTO;
 import com.unitedgo.booking_service.entity.Booking;
@@ -27,14 +27,18 @@ import reactor.core.publisher.Mono;
 @Service
 public class BookingService {
 
-	@Autowired
 	private BookingRepository bookingRepository;
-	
-	@Autowired
 	private WebClient.Builder webClient;
 	
+	@Autowired
+	public BookingService(BookingRepository bookingRepository, Builder webClient) {
+		super();
+		this.bookingRepository = bookingRepository;
+		this.webClient = webClient;
+	}
+
 	private static final String AUTHORIZATION = "Authorization";
-	private static final Double GST = 1.18;
+	public static final Double GST = 1.18;
 	
 	@Transactional
 	public BookingDTO createBooking(String flightId, String authHeader) throws URSException {

@@ -59,10 +59,10 @@ public class UserServiceImplTest {
 	@Test
 	public void testRegisterUserUsernameExists() throws URSException {
 		UserDTO userDTO = getUserDTO();
-		when(userRepository.existsById(userDTO.getUsername())).thenReturn(true);
+		when(userRepository.existsByUsernameOrPhoneNumber(userDTO.getUsername(), userDTO.getPhoneNumber())).thenReturn(true);
 		URSException exception = assertThrows(URSException.class, () -> userService.registerUser(userDTO));
 		assertEquals(HttpStatus.CONFLICT, exception.getCode());
-		assertEquals("Username already exists", exception.getMessage());
+		assertEquals("Username or phone number already exists", exception.getMessage());
 	}
 	
 	@Test

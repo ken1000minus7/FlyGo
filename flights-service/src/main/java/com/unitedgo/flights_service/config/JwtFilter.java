@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.Builder;
 
 import com.unitedgo.flights_service.model.Credentials;
 import jakarta.servlet.FilterChain;
@@ -26,11 +27,16 @@ public class JwtFilter extends OncePerRequestFilter {
 	private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
     
-    @Autowired
-    WebClient.Builder webClient;
+    private WebClient.Builder webClient;
     
+    @Autowired
+    public JwtFilter(Builder webClient) {
+		super();
+		this.webClient = webClient;
+	}
 
-    @Override
+
+	@Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,

@@ -20,8 +20,13 @@ import com.unitedgo.user_service.service.UserService;
 @EnableWebSecurity
 public class SecurityConfiguration {
 	
-	@Autowired
 	private JwtFilter jwtFilter;
+	
+	@Autowired
+	public SecurityConfiguration(JwtFilter jwtFilter) {
+		super();
+		this.jwtFilter = jwtFilter;
+	}
 
 	@Bean
 	AuthenticationManager authenticationManager(
@@ -34,7 +39,7 @@ public class SecurityConfiguration {
 				.passwordEncoder(passwordEncoder)
 				.and().build();
 	}
-	
+
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors(Customizer.withDefaults())

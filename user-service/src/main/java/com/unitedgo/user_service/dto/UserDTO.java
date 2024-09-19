@@ -19,7 +19,7 @@ import lombok.Setter;
 public class UserDTO {
 	
 	@Pattern(regexp = "^[a-z0-9@$%*?&!]+$", message = "${user.username}")
-	@NotNull(message = "${user.username}")
+	@NotNull(message = "{user.username}")
 	private String username;
 
 	@Length(min = 8, message = "${user.password}")

@@ -15,16 +15,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfiguration {
 	
-	@Autowired
 	private JwtFilter jwtFilter;
-
 	
+	@Autowired
+	public SecurityConfiguration(JwtFilter jwtFilter) {
+		super();
+		this.jwtFilter = jwtFilter;
+	}
+
+
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors(Customizer.withDefaults())
 			.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(a -> {
-				a.anyRequest().permitAll();
+				a.requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+						.anyRequest().permitAll();
 			})
 			.sessionManagement(s -> { s.sessionCreationPolicy(SessionCreationPolicy.STATELESS); })
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

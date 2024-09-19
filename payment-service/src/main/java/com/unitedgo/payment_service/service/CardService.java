@@ -13,9 +13,15 @@ import com.unitedgo.payment_service.util.URSException;
 @Service
 public class CardService {
 	
-	@Autowired
 	private CardRepository cardRepository;
 	
+	@Autowired
+	public CardService(CardRepository cardRepository) {
+		super();
+		this.cardRepository = cardRepository;
+	}
+
+
 	public CardDTO addCard(CardDTO cardDTO) throws URSException {
 		String username = PaymentServiceHelper.getUsername();
 		if(cardRepository.existsByCardNumberAndUserId(cardDTO.getCardNumber(), username)) {

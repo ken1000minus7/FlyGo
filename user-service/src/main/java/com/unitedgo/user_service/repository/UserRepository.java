@@ -8,4 +8,5 @@ import com.unitedgo.user_service.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 	boolean existsByUsername(String username);
+	boolean existsByUsernameOrPhoneNumber(String username, String phoneNumber);
 }

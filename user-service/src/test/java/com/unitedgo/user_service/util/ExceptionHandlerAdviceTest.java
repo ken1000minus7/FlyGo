@@ -1,4 +1,5 @@
-package com.unitedgo.user_service.util;
+
++package com.unitedgo.user_service.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.startsWith;

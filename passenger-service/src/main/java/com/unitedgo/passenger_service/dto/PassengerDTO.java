@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Range;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PassengerDTO {
 	
 	@NotNull(message = "${passenger.name}")
@@ -20,7 +22,7 @@ public class PassengerDTO {
 	private String name;
 	
 	@NotNull(message = "${passenger.gender}")
-	@Pattern(regexp = "^Male|Female|Other$", message = "${passenger.gender}")
+	@Pattern(regexp = "^Male$|^Female$|^Other$", message = "${passenger.gender}")
 	private String gender;
 	
 	@NotNull(message = "${passenger.age}")

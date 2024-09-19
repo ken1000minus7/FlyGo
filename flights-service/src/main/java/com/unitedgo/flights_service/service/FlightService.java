@@ -16,9 +16,14 @@ import com.unitedgo.flights_service.util.URSException;
 @Service
 public class FlightService {
 	
-	@Autowired
 	private FlightRepository flightRepository;
 	
+	@Autowired
+	public FlightService(FlightRepository flightRepository) {
+		super();
+		this.flightRepository = flightRepository;
+	}
+
 	public List<Flight> processSearchResults(List<Journey> journeys, String origin, String destination) {
 		List<Flight> flights = journeys.stream().map( journey -> {
 			String departureTime = journey.getFlights()
